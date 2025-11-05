@@ -1,9 +1,10 @@
 class_name PlayerSpawner
-extends AdvancedMultiplayerSpawner
+extends Node
 
+@export var spawn_path: NodePath
 @export var player_scene: PackedScene
 @export var default_abilities: Array[PackedScene] = [
-	# preload("res://scenes/abilities/devball.tscn"),
+	preload("res://scenes/abilities/devball.tscn"),
 ]
 
 
@@ -24,7 +25,7 @@ func spawn_player(id: int) -> void:
 	hero.position.x = randf_range(-5, 5)
 	hero.position.y = 0
 	hero.position.z = randf_range(-10, 0)
-	get_node(spawn_path).call_deferred("add_child", player)
+	get_node(spawn_path).add_child(player)
 
 	var hp := hero.find_child("NetworkHp", true) as NetworkHP
 	if hp:
@@ -36,7 +37,7 @@ func spawn_player(id: int) -> void:
 		caster.get_node(caster.abilities_container).add_child(ability)
 		caster.add_ability(ability)
 
-	set_visibility_for(id, player, true)
+	NetSync.set_visibility_for(id, player, true)
 
 
 func despawn_player(id: int) -> void:
